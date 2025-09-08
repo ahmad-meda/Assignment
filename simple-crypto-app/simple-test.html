@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CryptoPulse Pro - Test</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/js/all.min.js"></script>
+    <style>
+        .crypto-card {
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        .crypto-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        }
+        .featured {
+            border: 2px solid #3b82f6;
+            background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
+        }
+        .dark {
+            background: #111827;
+            color: white;
+        }
+        .dark .crypto-card {
+            background: #1f2937;
+            border-color: #374151;
+        }
+        .dark .featured {
+            background: linear-gradient(135deg, #1e3a8a 0%, #1e40af 100%);
+        }
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen">
+    <!-- Header -->
+    <header class="bg-gradient-to-r from-indigo-600 via-purple-600 to-blue-600 shadow-xl">
+        <div class="container mx-auto px-6 py-5 flex justify-between items-center">
+            <div class="flex items-center space-x-3">
+                <div class="w-10 h-10 bg-white bg-opacity-20 rounded-lg flex items-center justify-center">
+                    <i class="fas fa-chart-line text-white text-lg"></i>
+                </div>
+                <div>
+                    <h1 class="text-2xl font-bold text-white">CryptoPulse Pro</h1>
+                    <p class="text-blue-100 text-sm">Real-time Market Intelligence</p>
+                </div>
+            </div>
+            <button onclick="toggleTheme()" class="p-3 rounded-xl bg-white bg-opacity-10 hover:bg-opacity-20 transition-all">
+                <i id="themeIcon" class="fas fa-moon text-blue-200 text-lg"></i>
+            </button>
+        </div>
+    </header>
+
+    <div class="container mx-auto px-6 py-8">
+        <div class="grid lg:grid-cols-3 gap-8">
+            <!-- Crypto List -->
+            <div class="lg:col-span-2">
+                <div class="bg-white rounded-xl shadow-lg p-6">
+                    <div class="flex items-center justify-between mb-6">
+                        <div>
+                            <h2 class="text-2xl font-bold text-gray-800">
+                                <i class="fas fa-chart-line mr-3 text-green-500"></i>
+                                Live Market Data
+                            </h2>
+                            <p class="text-gray-600 mt-1">Real-time cryptocurrency prices</p>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <div class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+                            <span class="text-sm text-gray-600">Live</span>
+                        </div>
+                    </div>
+
+                    <!-- Search -->
+                    <div class="mb-6">
+                        <input type="text" id="searchBox" placeholder="Search cryptocurrencies..." 
+                               class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                    </div>
+
+                    <!-- Loading -->
+                    <div id="loading" class="text-center py-8">
+                        <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500 mx-auto"></div>
+                        <p class="mt-2 text-gray-600">Loading crypto data...</p>
+                    </div>
+
+                    <!-- Crypto List -->
+                    <div id="cryptoList" class="hidden space-y-4">
+                        <!-- Will be populated by JavaScript -->
+                    </div>
+
+                    <!-- Error -->
+                    <div id="error" class="hidden text-center py-8 text-red-500">
+                        <i class="fas fa-exclamation-triangle text-3xl mb-2"></i>
+                        <p>Failed to load data. Click to retry.</p>
+                        <button onclick="loadCryptos()" class="mt-4 bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600">
+                            Retry
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- AI Panel -->
+            <div class="lg:col-span-1">
+                <div class="bg-white rounded-xl shadow-lg p-6">
+                    <div class="flex items-center justify-between mb-6">
+                        <div>
+                            <h2 class="text-xl font-bold text-gray-800">
+                                <i class="fas fa-robot mr-3 text-purple-500"></i>
+                                AI Insights
+                            </h2>
+                            <p class="text-gray-600 text-sm mt-1">Powered by AI</p>
+                        </div>
+                        <div class="w-8 h-8 bg-gradient-to-r from-purple-500 to-blue-500 rounded-lg flex items-center justify-center">
+                            <i class="fas fa-brain text-white text-sm"></i>
+                        </div>
+                    </div>
+
+                    <div id="aiInsights" class="bg-gradient-to-r from-purple-50 to-blue-50 rounded-lg p-4 border">
+                        <div class="text-center py-4">
+                            <i class="fas fa-lightbulb text-3xl text-yellow-500 mb-2"></i>
+                            <p class="text-gray-600">Click on a cryptocurrency to get AI insights!</p>
+                        </div>
+                    </div>
+
+                    <button onclick="generateInsight()" class="w-full mt-4 bg-purple-600 hover:bg-purple-700 text-white font-bold py-3 px-4 rounded-lg transition-colors">
+                        <i class="fas fa-magic mr-2"></i>
+                        Generate AI Insight
+                    </button>
+                </div>
+
+                <!-- Selected Crypto Details -->
+                <div id="cryptoDetails" class="hidden mt-6 bg-white rounded-xl shadow-lg p-6">
+                    <div class="flex items-center mb-4">
+                        <i class="fas fa-info-circle mr-2 text-blue-500"></i>
+                        <h3 class="text-lg font-bold text-gray-800">Selected Asset</h3>
+                    </div>
+                    <div id="detailsContent">
+                        <!-- Details will be inserted here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let cryptoData = [];
+        let selectedCrypto = null;
+
+        // Load cryptocurrencies
+        async function loadCryptos() {
+            const loading = document.getElementById('loading');
+            const cryptoList = document.getElementById('cryptoList');
+            const error = document.getElementById('error');
+            
+            loading.classList.remove('hidden');
+            cryptoList.classList.add('hidden');
+            error.classList.add('hidden');
+
+            try {
+                const response = await fetch('https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=20&page=1&sparkline=false&price_change_percentage=24h');
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                
+                cryptoData = await response.json();
+                
+                // Move Vanry to front if it exists
+                const vanryIndex = cryptoData.findIndex(crypto => 
+                    crypto.id.includes('vanar') || crypto.symbol.toLowerCase() === 'vanry'
+                );
+                
+                if (vanryIndex > 0) {
+                    const vanry = cryptoData.splice(vanryIndex, 1)[0];
+                    cryptoData.unshift(vanry);
+                }
+
+                displayCryptos(cryptoData);
+                loading.classList.add('hidden');
+                cryptoList.classList.remove('hidden');
+                
+            } catch (err) {
+                console.error('Error loading cryptos:', err);
+                loading.classList.add('hidden');
+                error.classList.remove('hidden');
+            }
+        }
+
+        // Display cryptocurrencies
+        function displayCryptos(data) {
+            const container = document.getElementById('cryptoList');
+            container.innerHTML = '';
+
+            data.forEach((crypto, index) => {
+                const isFeatured = index === 0 && (crypto.id.includes('vanar') || crypto.symbol.toLowerCase() === 'vanry');
+                const changeClass = crypto.price_change_percentage_24h >= 0 ? 'text-green-500' : 'text-red-500';
+                const changeIcon = crypto.price_change_percentage_24h >= 0 ? 'fa-arrow-up' : 'fa-arrow-down';
+                
+                const card = document.createElement('div');
+                card.className = `crypto-card p-5 rounded-xl border bg-white ${isFeatured ? 'featured' : ''}`;
+                card.onclick = () => selectCrypto(crypto);
+                
+                card.innerHTML = `
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center space-x-4">
+                            <div class="relative">
+                                <img src="${crypto.image}" alt="${crypto.name}" class="w-12 h-12 rounded-full">
+                                ${isFeatured ? '<div class="absolute -top-1 -right-1 w-4 h-4 bg-blue-500 rounded-full flex items-center justify-center"><i class="fas fa-star text-white text-xs"></i></div>' : ''}
+                            </div>
+                            <div>
+                                <div class="flex items-center space-x-2">
+                                    <h3 class="font-bold text-gray-800 text-lg">${crypto.name}</h3>
+                                    ${isFeatured ? '<span class="text-xs bg-gradient-to-r from-blue-500 to-purple-500 text-white px-2 py-1 rounded-full">FEATURED</span>' : ''}
+                                </div>
+                                <p class="text-gray-600 uppercase font-medium">${crypto.symbol}</p>
+                                ${isFeatured ? '<p class="text-xs text-blue-600 font-medium mt-1">VANRY/USDT Pair</p>' : ''}
+                            </div>
+                        </div>
+                        <div class="text-right">
+                            <p class="font-bold text-gray-800 text-lg">$${crypto.current_price.toFixed(4)}</p>
+                            <div class="flex items-center justify-end ${changeClass} text-sm font-semibold">
+                                <i class="fas ${changeIcon} mr-1"></i>
+                                ${crypto.price_change_percentage_24h?.toFixed(2) || '0.00'}%
+                            </div>
+                            <p class="text-xs text-gray-500 mt-1">Vol: $${formatNumber(crypto.total_volume)}</p>
+                        </div>
+                    </div>
+                `;
+                
+                container.appendChild(card);
+            });
+        }
+
+        // Select cryptocurrency
+        function selectCrypto(crypto) {
+            selectedCrypto = crypto;
+            
+            // Remove previous selection
+            document.querySelectorAll('.crypto-card').forEach(card => {
+                card.classList.remove('ring-2', 'ring-blue-500');
+            });
+            
+            // Highlight selected
+            event.currentTarget.classList.add('ring-2', 'ring-blue-500');
+            
+            // Show details
+            showCryptoDetails(crypto);
+        }
+
+        // Show crypto details
+        function showCryptoDetails(crypto) {
+            const detailsDiv = document.getElementById('cryptoDetails');
+            const contentDiv = document.getElementById('detailsContent');
+            
+            contentDiv.innerHTML = `
+                <div class="space-y-3">
+                    <div class="flex items-center space-x-3">
+                        <img src="${crypto.image}" alt="${crypto.name}" class="w-12 h-12 rounded-full">
+                        <div>
+                            <h4 class="font-bold text-gray-800">${crypto.name}</h4>
+                            <p class="text-gray-600">${crypto.symbol.toUpperCase()}</p>
+                        </div>
+                    </div>
+                    
+                    <div class="grid grid-cols-2 gap-4 text-sm">
+                        <div>
+                            <p class="text-gray-500">Price</p>
+                            <p class="font-bold text-gray-800">$${crypto.current_price.toFixed(4)}</p>
+                        </div>
+                        <div>
+                            <p class="text-gray-500">24h Change</p>
+                            <p class="${crypto.price_change_percentage_24h >= 0 ? 'text-green-500' : 'text-red-500'} font-bold">
+                                ${crypto.price_change_percentage_24h?.toFixed(2) || '0.00'}%
+                            </p>
+                        </div>
+                        <div>
+                            <p class="text-gray-500">Market Cap</p>
+                            <p class="font-bold text-gray-800">$${formatNumber(crypto.market_cap)}</p>
+                        </div>
+                        <div>
+                            <p class="text-gray-500">Volume</p>
+                            <p class="font-bold text-gray-800">$${formatNumber(crypto.total_volume)}</p>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            detailsDiv.classList.remove('hidden');
+        }
+
+        // Generate AI insight
+        function generateInsight() {
+            if (!selectedCrypto) {
+                alert('Please select a cryptocurrency first!');
+                return;
+            }
+            
+            const insights = [
+                `${selectedCrypto.name} shows interesting market dynamics. The current price of $${selectedCrypto.current_price.toFixed(4)} reflects recent market sentiment. Consider market volatility and do your own research.`,
+                `Based on current data, ${selectedCrypto.name} has a market cap of $${formatNumber(selectedCrypto.market_cap)}. This cryptocurrency has shown ${selectedCrypto.price_change_percentage_24h >= 0 ? 'positive' : 'negative'} movement in the last 24 hours.`,
+                `${selectedCrypto.name} is trading with significant volume ($${formatNumber(selectedCrypto.total_volume)}). Always consider risk management and never invest more than you can afford to lose.`,
+                `The technical indicators for ${selectedCrypto.name} suggest ${selectedCrypto.price_change_percentage_24h >= 0 ? 'bullish' : 'bearish'} sentiment. Past performance doesn't guarantee future results.`
+            ];
+            
+            const randomInsight = insights[Math.floor(Math.random() * insights.length)];
+            
+            document.getElementById('aiInsights').innerHTML = `
+                <div class="space-y-3">
+                    <div class="flex items-center justify-between">
+                        <span class="text-sm font-bold text-purple-600">
+                            <i class="fas fa-robot mr-1"></i>
+                            AI Analysis
+                        </span>
+                        <span class="text-xs text-gray-500">${new Date().toLocaleTimeString()}</span>
+                    </div>
+                    <p class="text-gray-700 leading-relaxed">${randomInsight}</p>
+                    <p class="text-xs text-gray-500 italic">⚠️ Demo AI insight. Always do your own research before investing.</p>
+                </div>
+            `;
+        }
+
+        // Format large numbers
+        function formatNumber(num) {
+            if (num >= 1e12) return (num / 1e12).toFixed(2) + 'T';
+            if (num >= 1e9) return (num / 1e9).toFixed(2) + 'B';
+            if (num >= 1e6) return (num / 1e6).toFixed(2) + 'M';
+            if (num >= 1e3) return (num / 1e3).toFixed(2) + 'K';
+            return num?.toFixed(2) || '0';
+        }
+
+        // Toggle theme
+        function toggleTheme() {
+            const body = document.body;
+            const icon = document.getElementById('themeIcon');
+            
+            body.classList.toggle('dark');
+            
+            if (body.classList.contains('dark')) {
+                body.style.background = '#111827';
+                icon.className = 'fas fa-sun text-yellow-300 text-lg';
+            } else {
+                body.style.background = '#f9fafb';
+                icon.className = 'fas fa-moon text-blue-200 text-lg';
+            }
+        }
+
+        // Search functionality
+        document.getElementById('searchBox').addEventListener('input', (e) => {
+            const query = e.target.value.toLowerCase();
+            if (!query) {
+                displayCryptos(cryptoData);
+                return;
+            }
+            
+            const filtered = cryptoData.filter(crypto => 
+                crypto.name.toLowerCase().includes(query) ||
+                crypto.symbol.toLowerCase().includes(query)
+            );
+            displayCryptos(filtered);
+        });
+
+        // Load data when page loads
+        window.addEventListener('load', loadCryptos);
+        
+        // Auto-refresh every 60 seconds
+        setInterval(loadCryptos, 60000);
+    </script>
+</body>
+</html>

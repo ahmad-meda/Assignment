@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CryptoPulse Pro - Real-time Market Intelligence</title>
+    <link href="https://cdn.tailwindcss.com" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="css/style.css" rel="stylesheet">
+</head>
+<body class="bg-gray-50 dark:bg-gray-900 min-h-screen transition-all duration-300">
+    
+    <!-- Header -->
+    <header class="bg-gradient-to-r from-indigo-600 via-purple-600 to-blue-600 shadow-xl">
+        <div class="container mx-auto px-6 py-5 flex justify-between items-center">
+            <div class="flex items-center space-x-3">
+                <div class="w-10 h-10 bg-white bg-opacity-20 rounded-lg flex items-center justify-center backdrop-blur-sm">
+                    <i class="fas fa-chart-line text-white text-lg"></i>
+                </div>
+                <div>
+                    <h1 class="text-2xl font-bold text-white tracking-tight">
+                        CryptoPulse Pro
+                    </h1>
+                    <p class="text-blue-100 text-sm">Real-time Market Intelligence</p>
+                </div>
+            </div>
+            
+            <!-- Day/Night Toggle -->
+            <button id="themeToggle" class="group p-3 rounded-xl bg-white bg-opacity-10 hover:bg-opacity-20 backdrop-blur-sm transition-all duration-300 border border-white border-opacity-20">
+                <i class="fas fa-sun text-yellow-300 group-hover:text-yellow-200 dark:hidden text-lg"></i>
+                <i class="fas fa-moon text-blue-200 group-hover:text-blue-100 hidden dark:inline text-lg"></i>
+            </button>
+        </div>
+    </header>
+
+    <div class="container mx-auto px-4 py-8">
+        <!-- Main Content Grid -->
+        <div class="grid lg:grid-cols-3 gap-8">
+            
+            <!-- Left Column: Crypto List -->
+            <div class="lg:col-span-2">
+                <div class="card-section rounded-xl p-6">
+                    <div class="flex items-center justify-between mb-6">
+                        <div>
+                            <h2 class="text-2xl font-bold text-gray-800 dark:text-white">
+                                <i class="fas fa-chart-line mr-3 text-green-500"></i>
+                                Live Market Data
+                            </h2>
+                            <p class="text-gray-600 dark:text-gray-400 mt-1">Real-time cryptocurrency prices and trends</p>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <div class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+                            <span class="text-sm text-gray-600 dark:text-gray-400">Live</span>
+                        </div>
+                    </div>
+                    
+                    <!-- Search Box -->
+                    <div class="mb-4">
+                        <input 
+                            type="text" 
+                            id="searchBox" 
+                            placeholder="Search cryptocurrencies..."
+                            class="w-full p-3 border rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        >
+                    </div>
+                    
+                    <!-- Loading -->
+                    <div id="loading" class="text-center py-8">
+                        <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500 mx-auto"></div>
+                        <p class="mt-2 text-gray-600 dark:text-gray-400">Loading crypto data...</p>
+                    </div>
+                    
+                    <!-- Crypto List -->
+                    <div id="cryptoList" class="hidden space-y-3">
+                        <!-- Crypto items will be inserted here -->
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Right Column: AI Insights -->
+            <div class="lg:col-span-1">
+                <div class="card-section rounded-xl p-6">
+                    <div class="flex items-center justify-between mb-6">
+                        <div>
+                            <h2 class="text-xl font-bold text-gray-800 dark:text-white">
+                                <i class="fas fa-robot mr-3 text-purple-500"></i>
+                                AI Market Insights
+                            </h2>
+                            <p class="text-gray-600 dark:text-gray-400 text-sm mt-1">Powered by AI analysis</p>
+                        </div>
+                        <div class="w-8 h-8 bg-gradient-to-r from-purple-500 to-blue-500 rounded-lg flex items-center justify-center">
+                            <i class="fas fa-brain text-white text-sm"></i>
+                        </div>
+                    </div>
+                    
+                    <!-- AI Provider Selection -->
+                    <div class="mb-4">
+                        <select id="aiProvider" class="w-full p-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                            <option value="openai">OpenAI GPT</option>
+                            <option value="gemini">Google Gemini</option>
+                        </select>
+                    </div>
+                    
+                    <!-- AI Insights Display -->
+                    <div id="aiInsights" class="bg-gradient-to-r from-purple-50 to-blue-50 dark:from-purple-900 dark:to-blue-900 rounded-lg p-4">
+                        <div class="text-center py-4">
+                            <i class="fas fa-lightbulb text-3xl text-yellow-500 mb-2"></i>
+                            <p class="text-gray-600 dark:text-gray-300">Click on a cryptocurrency to get AI insights!</p>
+                        </div>
+                    </div>
+                    
+                    <!-- Generate Insight Button -->
+                    <button id="generateInsight" class="w-full mt-4 bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded-lg transition-colors disabled:opacity-50" disabled>
+                        <i class="fas fa-magic mr-2"></i>
+                        Generate AI Insight
+                    </button>
+                </div>
+                
+                <!-- Selected Crypto Details -->
+                <div id="cryptoDetails" class="hidden mt-6 card-section rounded-xl p-6">
+                    <div class="flex items-center mb-4">
+                        <i class="fas fa-info-circle mr-2 text-blue-500"></i>
+                        <h3 class="text-lg font-bold text-gray-800 dark:text-white">Selected Asset Details</h3>
+                    </div>
+                    <div id="detailsContent">
+                        <!-- Details will be inserted here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="js/config.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/ai.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>
