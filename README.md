@@ -1,4 +1,4 @@
-1`# CryptoPulse - Real-time Cryptocurrency Tracker
+# CryptoPulse - Real-time Cryptocurrency Tracker
 
 ## Project Overview
 
